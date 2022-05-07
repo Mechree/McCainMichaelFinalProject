@@ -13,7 +13,7 @@
 // Prototypes
 Employee_C Fill_Array(int, int&);
 void Extract_ID(string, Employee_C [], int& , int );
-int Find_Employee(string , int, int );
+int Find_Employee(string , int );
 
 int main()
 {
@@ -44,7 +44,7 @@ int main()
 
 		int pos = 0;
 		// Get position of ID in binary file
-		pos = Find_Employee(fName,id,empCount);
+		pos = Find_Employee(fName,id);
 		if (pos == -1)
 		{
 			cout << "\nEmployee ID does not exist!";
@@ -153,7 +153,7 @@ void Extract_ID(string fName, Employee_C employees[], int &numEmp, int SZ)
 	file.close();
 }
 
-int Find_Employee(string fName, int id, int numEmp)
+int Find_Employee(string fName, int id)
 {
 	ifstream file;
 	string fTitle = fName.substr(0, fName.find_last_of('.')) + ".dat"; // use name from user and add .dat to file extension
@@ -168,12 +168,12 @@ int Find_Employee(string fName, int id, int numEmp)
 		Employee_C employee;
 		cout << "\nFile opened successfully." << endl;
 		int size = 0;
-
 		file.clear();
-		// go to the end of binary file, read the size, and reset read position to the beginning
-		file.seekg(0, ios::end);
+		// go to the end of binary file, get and save the size, and reset read position to the beginning
+		file.seekg(0L, ios::end);
 		size = (int)file.tellg();
-		file.seekg(0, ios::beg);
+		file.seekg(0L, ios::beg);
+		// read file to the end while comparing positions to the ID enterted by the user.
 		file.read(reinterpret_cast<char*>(&employee), sizeof(employee));
 
 		while (file.tellg()< size)
@@ -189,7 +189,6 @@ int Find_Employee(string fName, int id, int numEmp)
 					// if ID isnt found, return -1
 					return -1;
 				}
-			
 		}
 
 	}
