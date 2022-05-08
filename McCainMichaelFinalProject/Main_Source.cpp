@@ -13,7 +13,7 @@
 // Prototypes
 Employee_C Fill_Array(int, int&);
 void Extract_ID(string, Employee_C [], int& , int );
-int Find_Employee(string , int );
+int Find_Employee(string , int, int& );
 
 int main()
 {
@@ -43,8 +43,11 @@ int main()
 		cin >> id;
 
 		int pos = 0;
+		int *pos_P = nullptr;
+		pos_P = &pos;
+
 		// Get position of ID in binary file
-		pos = Find_Employee(fName,id);
+		Find_Employee(fName,id, pos);
 		if (pos == -1)
 		{
 			cout << "\nEmployee ID does not exist!";
@@ -159,7 +162,7 @@ void Extract_ID(string fName, Employee_C employees[], int &numEmp, int SZ)
 	file.close();
 }
 
-int Find_Employee(string fName, int id)
+int Find_Employee(string fName, int id, int& pos)
 {
 	ifstream file;
 	string fTitle = fName.substr(0, fName.find_last_of('.')) + ".dat"; // use name from user and add .dat to file extension
@@ -197,16 +200,16 @@ int Find_Employee(string fName, int id)
 			{
 				// return position to main
 				cout << "\n" << file.tellg();
-				return file.tellg();
+				pos = file.tellg();
 			}
 			else
 			{
 				// if ID isnt found, return -1
-				return -1;
+				pos = -1;
 			}
 		}
 	}
-	// else return -1 using a pointer in function param list
+	// else return -1 using a pointer in function  param list
 
 	file.close();
 }
