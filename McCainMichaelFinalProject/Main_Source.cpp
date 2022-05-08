@@ -47,7 +47,7 @@ int main()
 		pos_P = &pos;
 
 		// Get position of ID in binary file
-		Find_Employee(fName,id, pos);
+		Find_Employee(fName,id, *pos_P);
 		if (pos == -1)
 		{
 			cout << "\nEmployee ID does not exist!";
@@ -55,10 +55,10 @@ int main()
 		else
 		{
 			// use position to display Employee info
-			cout << "\nName: " << employees[pos].Get_Name();
-			cout << "\nID : " << employees[pos].Get_ID();
-			cout << "\nSalary: $" << employees[pos].Get_Sal();
-			cout << "\nGender: " << employees[pos].Get_Gend() << endl;
+			cout << "\nName: " << employees[*pos_P].Get_Name();
+			cout << "\nID : " << employees[*pos_P].Get_ID();
+			cout << "\nSalary: $" << employees[*pos_P].Get_Sal();
+			cout << "\nGender: " << employees[*pos_P].Get_Gend() << endl;
 		}
 		// Ask user to continue or end program
 		cout << "\nEnter 1 to search for another ID, else enter 0>";
@@ -162,7 +162,7 @@ void Extract_ID(string fName, Employee_C employees[], int &numEmp, int SZ)
 	file.close();
 }
 
-int Find_Employee(string fName, int id, int& pos)
+int Find_Employee(string fName, int id, int& pos_P)
 {
 	ifstream file;
 	string fTitle = fName.substr(0, fName.find_last_of('.')) + ".dat"; // use name from user and add .dat to file extension
@@ -187,9 +187,6 @@ int Find_Employee(string fName, int id, int& pos)
 		size = (int)file.tellg();
 		file.seekg(0L, ios::beg);
 
-		// read file to the end while comparing positions to the ID enterted by the user.
-		//file.read(reinterpret_cast<char*>(&employeeID), sizeof(employeeID));
-
 		// While the byte position in the file is less than the byte size, read the file position ...
 		// and then return that position to main, else return -1.
 		while (file.tellg()< size)
@@ -200,16 +197,16 @@ int Find_Employee(string fName, int id, int& pos)
 			{
 				// return position to main
 				cout << "\n" << file.tellg();
-				pos = file.tellg();
+				pos_P = file.tellg();
 			}
 			else
 			{
-				// if ID isnt found, return -1
-				pos = -1;
+				// else return -1 using a pointer in function  param list
+				pos_P = -1;
 			}
 		}
 	}
-	// else return -1 using a pointer in function  param list
+	
 
 	file.close();
 }
