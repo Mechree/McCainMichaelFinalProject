@@ -145,9 +145,15 @@ void Extract_ID(string fName, Employee_C employees[], int &numEmp, int SZ)
 	}
 	else {
 		cout << "\nFile " << fTitle << " created successfully!";
-		cout << "\nPopulating file....";
-		// write employee array to binary file
-		file.write(reinterpret_cast<char*>(&employees), sizeof(employees));
+		cout << "\nPopulating file...." << endl;
+		int id = -1;
+
+		// write employee IDs to binary file
+		for (int i = 0; i < numEmp; i++)
+		{
+			id = employees[i].Get_ID();
+			file.write(reinterpret_cast<char*>(&id), sizeof(id));
+		}
 		cout << "\nTask Completed!";
 	}
 	file.close();
@@ -157,6 +163,9 @@ int Find_Employee(string fName, int id)
 {
 	ifstream file;
 	string fTitle = fName.substr(0, fName.find_last_of('.')) + ".dat"; // use name from user and add .dat to file extension
+	string line;
+	unsigned char fID;
+
 	file.open(fTitle, ios::in | ios::binary);
 	if (file.fail())
 	{
@@ -165,32 +174,37 @@ int Find_Employee(string fName, int id)
 	}
 	else 
 	{
-		Employee_C employee;
+
 		cout << "\nFile opened successfully." << endl;
 		int size = 0;
 		file.clear();
+
 		// go to the end of binary file, get and save the size, and reset read position to the beginning
 		file.seekg(0L, ios::end);
 		size = (int)file.tellg();
 		file.seekg(0L, ios::beg);
-		// read file to the end while comparing positions to the ID enterted by the user.
-		file.read(reinterpret_cast<char*>(&employee), sizeof(employee));
 
+		// read file to the end while comparing positions to the ID enterted by the user.
+		//file.read(reinterpret_cast<char*>(&employeeID), sizeof(employeeID));
+
+		// While the byte position in the file is less than the byte size, read the file position ...
+		// and then return that position to main, else return -1.
 		while (file.tellg()< size)
 		{
 			// search binary file for entered ID
-				if (id == employee.Get_ID())
-				{
-					// return position to main
-					return file.tellg();
-				}
-				else
-				{
-					// if ID isnt found, return -1
-					return -1;
-				}
+			file.read(reinterpret_cast<char*>(&fID), sizeof(fID));
+			if (id == static_cast<int>(fID))
+			{
+				// return position to main
+				cout << "\n" << file.tellg();
+				return file.tellg();
+			}
+			else
+			{
+				// if ID isnt found, return -1
+				return -1;
+			}
 		}
-
 	}
 	// else return -1 using a pointer in function param list
 
